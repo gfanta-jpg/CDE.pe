@@ -40,7 +40,7 @@ export const categories = pgTable(
       .on(table.landingOrder)
       .where(sql`${table.showOnLanding} = true`),
     check("categories_landing_selection_consistent", sql`
-      (${table.showOnLanding} = true and ${table.landingOrder} is not null and ${table.landingOrder} between 1 and 3)
+      (${table.showOnLanding} = true and ${table.landingOrder} is not null and ${table.landingOrder} between 1 and 4)
       or (${table.showOnLanding} = false and ${table.landingOrder} is null)
     `),
     check("categories_name_not_blank", sql`btrim(${table.name}) <> ''`),

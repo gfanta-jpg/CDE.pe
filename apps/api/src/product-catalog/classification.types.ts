@@ -1,5 +1,7 @@
 export const CLASSIFICATION_STATUSES = ["ACTIVE", "INACTIVE"] as const;
 export type ClassificationStatus = (typeof CLASSIFICATION_STATUSES)[number];
+/** Landing categories (Tienda tabs): positions 1..LANDING_CATEGORY_LIMIT. */
+export const LANDING_CATEGORY_LIMIT = 4;
 export const CLASSIFICATION_SORT_FIELDS = ["createdAt", "updatedAt", "name", "slug", "status"] as const;
 export type ClassificationSortField = (typeof CLASSIFICATION_SORT_FIELDS)[number];
 export type ClassificationKind = "category" | "tag";

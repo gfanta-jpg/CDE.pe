@@ -14,8 +14,8 @@ export const catalogLandingSchema = z.object({
   latestProducts: z.array(landingProductSchema).max(9),
   highlightedCategories: z.array(z.object({
     category: landingCategorySchema,
-    products: z.array(landingProductSchema).min(1).max(3),
-  }).strict()).max(3),
+    products: z.array(landingProductSchema).max(3),
+  }).strict()).max(4),
 }).strict().superRefine((value, context) => {
   const unique = (ids: string[]) => new Set(ids).size === ids.length;
   const featuredIds = value.featuredProducts.map((product) => product.id);

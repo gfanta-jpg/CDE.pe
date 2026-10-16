@@ -22,9 +22,9 @@ const baseRecord = {
 
 describe("classification HTTP schemas", () => {
   it("validates editorial category patches without accepting them on tags or creation", () => {
-    expect(updateCategoryRequestSchema.parse({ showOnLanding: true, landingOrder: 3 })).toEqual({ showOnLanding: true, landingOrder: 3 });
+    expect(updateCategoryRequestSchema.parse({ showOnLanding: true, landingOrder: 4 })).toEqual({ showOnLanding: true, landingOrder: 4 });
     expect(updateCategoryRequestSchema.parse({ showOnLanding: false, landingOrder: null })).toEqual({ showOnLanding: false, landingOrder: null });
-    for (const landingOrder of [0, 4, 1.5, "1"]) expect(updateCategoryRequestSchema.safeParse({ landingOrder }).success).toBe(false);
+    for (const landingOrder of [0, 5, 1.5, "1"]) expect(updateCategoryRequestSchema.safeParse({ landingOrder }).success).toBe(false);
     expect(updateCategoryRequestSchema.safeParse({ showOnLanding: "true" }).success).toBe(false);
     expect(updateTagRequestSchema.safeParse({ showOnLanding: true }).success).toBe(false);
     expect(createCategoryRequestSchema.safeParse({ name: "Demo", showOnLanding: true }).success).toBe(false);

@@ -19,13 +19,13 @@ class LandingCategoryDto {
 
 class HighlightedCategoryDto {
   @ApiProperty({ type: LandingCategoryDto }) category!: LandingCategoryDto;
-  @ApiProperty({ type: [LandingProductDto], minItems: 1, maxItems: 3 }) products!: LandingProductDto[];
+  @ApiProperty({ type: [LandingProductDto], minItems: 0, maxItems: 3 }) products!: LandingProductDto[];
 }
 
 export class CatalogLandingDto {
   @ApiProperty({ type: [LandingProductDto], maxItems: 3 }) featuredProducts!: LandingProductDto[];
   @ApiProperty({ type: [LandingProductDto], maxItems: 9 }) latestProducts!: LandingProductDto[];
-  @ApiProperty({ type: [HighlightedCategoryDto], maxItems: 3 }) highlightedCategories!: HighlightedCategoryDto[];
+  @ApiProperty({ type: [HighlightedCategoryDto], maxItems: 4 }) highlightedCategories!: HighlightedCategoryDto[];
 }
 
 @ApiTags("catalog")
@@ -35,7 +35,7 @@ export class CatalogLandingController {
 
   @Get("landing")
   @Header("Cache-Control", "no-store")
-  @ApiOperation({ operationId: "getCatalogLanding", summary: "Read the fixed public landing composition", description: "Up to three featured products, nine latest products excluding the displayed featured IDs, and three ordered non-empty categories with up to three products each. No query parameters are accepted. All sections share one database snapshot; no administrative editorial fields are exposed." })
+  @ApiOperation({ operationId: "getCatalogLanding", summary: "Read the fixed public landing composition", description: "Up to three featured products, nine latest products excluding the displayed featured IDs, and up to four ordered highlighted active categories (also when empty) with up to three products each. No query parameters are accepted. All sections share one database snapshot; no administrative editorial fields are exposed." })
   @ApiOkResponse({ type: CatalogLandingDto })
   @ApiBadRequestResponse({ description: "Query parameters are not supported; use GET /products for search, filters and pagination" })
   get(@Query() query: Record<string, unknown>): Promise<CatalogLanding> {

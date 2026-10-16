@@ -2903,7 +2903,7 @@
     },
     "/api/v1/catalog/landing": {
       "get": {
-        "description": "Up to three featured products, nine latest products excluding the displayed featured IDs, and three ordered non-empty categories with up to three products each. No query parameters are accepted. All sections share one database snapshot; no administrative editorial fields are exposed.",
+        "description": "Up to three featured products, nine latest products excluding the displayed featured IDs, and up to four ordered highlighted active categories (also when empty) with up to three products each. No query parameters are accepted. All sections share one database snapshot; no administrative editorial fields are exposed.",
         "operationId": "getCatalogLanding",
         "parameters": [],
         "responses": {
@@ -5949,7 +5949,7 @@
             "type": "number",
             "nullable": true,
             "minimum": 1,
-            "maximum": 3,
+            "maximum": 4,
             "description": "ADMIN view and mutation responses only"
           },
           "description": {
@@ -6039,7 +6039,7 @@
             "type": "number",
             "nullable": true,
             "minimum": 1,
-            "maximum": 3,
+            "maximum": 4,
             "description": "Swap positions when both categories are already selected"
           },
           "name": {
@@ -6578,7 +6578,7 @@
             "$ref": "#/components/schemas/LandingCategoryDto"
           },
           "products": {
-            "minItems": 1,
+            "minItems": 0,
             "maxItems": 3,
             "type": "array",
             "items": {
@@ -6609,7 +6609,7 @@
             }
           },
           "highlightedCategories": {
-            "maxItems": 3,
+            "maxItems": 4,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/HighlightedCategoryDto"

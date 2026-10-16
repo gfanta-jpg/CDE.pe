@@ -30,7 +30,11 @@ describe("public landing boundary", () => {
     expect(catalogLandingSchema.safeParse({ ...composition, featuredProducts: products.slice(0, 4) }).success).toBe(false);
     expect(catalogLandingSchema.safeParse({ ...composition, featuredProducts: [], latestProducts: products }).success).toBe(false);
     expect(catalogLandingSchema.safeParse({ ...composition, latestProducts: [product] }).success).toBe(false);
-    expect(catalogLandingSchema.safeParse({ ...composition, highlightedCategories: [{ category, products: [] }] }).success).toBe(false);
+    // Highlighted categories are listed even without products (storefront tabs); at most four.
+    expect(catalogLandingSchema.safeParse({ ...composition, highlightedCategories: [{ category, products: [] }] }).success).toBe(true);
+    const fiveCategories = Array.from({ length: 5 }, (_, index) => ({ category: { ...category, id: `785df2fb-1d91-48b1-9d6a-${String(index).padStart(12, "0")}` }, products: [] }));
+    expect(catalogLandingSchema.safeParse({ ...composition, highlightedCategories: fiveCategories.slice(0, 4) }).success).toBe(true);
+    expect(catalogLandingSchema.safeParse({ ...composition, highlightedCategories: fiveCategories }).success).toBe(false);
     expect(catalogLandingSchema.safeParse({ ...composition, highlightedCategories: [{ category, products: products.slice(0, 4) }] }).success).toBe(false);
     expect(catalogLandingSchema.safeParse({ ...composition, highlightedCategories: Array(4).fill(composition.highlightedCategories[0]) }).success).toBe(false);
     expect(catalogLandingSchema.safeParse({ ...composition, highlightedCategories: [{ category, products: [{ ...product, category: null }] }] }).success).toBe(false);

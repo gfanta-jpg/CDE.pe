@@ -142,7 +142,7 @@ export function ClassificationManagement({ kind }: Readonly<{ kind: Classificati
     { id: "updatedAt", header: "Actualización", cell: (record) => <time dateTime={record.updatedAt}>{formatDate(record.updatedAt)}</time> },
     { id: "actions", header: "Acciones", cell: (record) => (
       <div className="flex min-w-36 flex-wrap gap-2">
-        {kind === "categories" ? <IconButton icon="star" label={(record as Category).showOnLanding ? `Retirar ${record.name} de la landing` : `Incluir ${record.name} en la landing`} disabled={!editorial.ready || saveMutation.isPending || statusMutation.isPending || deleteMutation.isPending || (!(record as Category).showOnLanding && (record.status !== "ACTIVE" || editorial.categories.length >= 3))} onClick={() => {
+        {kind === "categories" ? <IconButton icon="star" label={(record as Category).showOnLanding ? `Retirar ${record.name} de la landing` : `Incluir ${record.name} en la landing`} disabled={!editorial.ready || saveMutation.isPending || statusMutation.isPending || deleteMutation.isPending || (!(record as Category).showOnLanding && (record.status !== "ACTIVE" || editorial.categories.length >= 4))} onClick={() => {
           if ((record as Category).showOnLanding) setConfirmation({ action: "withdraw", record });
           else editorial.select(record as Category);
         }} /> : null}

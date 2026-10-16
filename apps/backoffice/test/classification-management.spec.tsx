@@ -168,9 +168,9 @@ describe("administrative categories and tags", () => {
   });
 
   function installEditorialState(selectedCount: number) {
-    let records: Category[] = Array.from({ length: 5 }, (_, index) => ({ ...category,
+    let records: Category[] = Array.from({ length: 6 }, (_, index) => ({ ...category,
       id: `10000000-0000-4000-8000-${String(index).padStart(12, "0")}`, name: `Categoría ${index + 1}`, slug: `categoria-${index + 1}`,
-      status: index === 4 ? "INACTIVE" : "ACTIVE", showOnLanding: index < selectedCount, landingOrder: index < selectedCount ? index + 1 : null,
+      status: index === 5 ? "INACTIVE" : "ACTIVE", showOnLanding: index < selectedCount, landingOrder: index < selectedCount ? index + 1 : null,
     }));
     api.listClassifications.mockImplementation(async (_kind, _token, query) => {
       const items = query.showOnLanding ? records.filter((record) => record.showOnLanding) : records;
@@ -178,7 +178,7 @@ describe("administrative categories and tags", () => {
     });
     api.updateClassification.mockImplementation(async (_kind, _token, id, input) => {
       const previous = records.find((record) => record.id === id)!;
-      const position = input.landingOrder ?? (input.showOnLanding ? [1, 2, 3].find((slot) => !records.some((record) => record.landingOrder === slot)) : null);
+      const position = input.landingOrder ?? (input.showOnLanding ? [1, 2, 3, 4].find((slot) => !records.some((record) => record.landingOrder === slot)) : null);
       records = records.map((record) => record.id === id ? { ...record, showOnLanding: input.showOnLanding ?? record.showOnLanding, landingOrder: position }
         : input.landingOrder && record.landingOrder === position ? { ...record, landingOrder: previous.landingOrder } : record);
       return records.find((record) => record.id === id)!;
@@ -190,17 +190,17 @@ describe("administrative categories and tags", () => {
     const records = installEditorialState(0);
     const { invalidate } = renderManagement("categories");
     expect(await screen.findByText(/Configuración incompleta/)).toBeInTheDocument();
-    for (let index = 0; index < 3; index += 1) {
+    for (let index = 0; index < 4; index += 1) {
       const action = screen.getByRole("button", { name: `Incluir Categoría ${index + 1} en la landing` });
       await waitFor(() => expect(action).toBeEnabled());
       fireEvent.click(action);
-      await screen.findByText(`${index + 1}/3 seleccionadas`);
+      await screen.findByText(`${index + 1}/4 seleccionadas`);
     }
-    expect(screen.getByRole("button", { name: "Incluir Categoría 4 en la landing" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Incluir Categoría 5 en la landing" })).toBeDisabled();
-    expect(api.updateClassification).toHaveBeenCalledTimes(3);
+    expect(screen.getByRole("button", { name: "Incluir Categoría 6 en la landing" })).toBeDisabled();
+    expect(api.updateClassification).toHaveBeenCalledTimes(4);
     expect(api.updateClassification).toHaveBeenCalledWith("categories", "ADMIN-token", records[0]!.id, { showOnLanding: true });
-    expect(api.listClassifications).toHaveBeenCalledWith("categories", "ADMIN-token", expect.objectContaining({ page: 1, pageSize: 3, showOnLanding: true, view: "administrative" }), expect.any(AbortSignal));
+    expect(api.listClassifications).toHaveBeenCalledWith("categories", "ADMIN-token", expect.objectContaining({ page: 1, pageSize: 4, showOnLanding: true, view: "administrative" }), expect.any(AbortSignal));
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ["catalog", "public", "landing"] });
     expect(screen.queryByText(/Configuración incompleta/)).not.toBeInTheDocument();
     expect(navigation.push).not.toHaveBeenCalled();
@@ -245,21 +245,21 @@ describe("administrative categories and tags", () => {
     expect(api.deleteClassification).not.toHaveBeenCalled();
   });
 
-  it("handles a concurrent fourth selection with a safe error and does not duplicate pending writes", async () => {
-    installEditorialState(2);
+  it("handles a concurrent fifth selection with a safe error and does not duplicate pending writes", async () => {
+    installEditorialState(3);
     renderManagement("categories");
-    const action = await screen.findByRole("button", { name: "Incluir Categoría 3 en la landing" });
+    const action = await screen.findByRole("button", { name: "Incluir Categoría 4 en la landing" });
     await waitFor(() => expect(action).toBeEnabled());
     api.updateClassification.mockRejectedValueOnce(new ClassificationApiError(409, "CATEGORY_LANDING_LIMIT_EXCEEDED"));
     fireEvent.click(action);
-    await screen.findByText("Solo puedes seleccionar hasta tres categorías. Retira una antes de añadir otra.");
+    await screen.findByText("Solo puedes seleccionar hasta cuatro categorías. Retira una antes de añadir otra.");
     await waitFor(() => expect(action).toBeEnabled());
     api.updateClassification.mockImplementationOnce(() => new Promise(() => undefined));
     fireEvent.click(action);
     await waitFor(() => expect(action).toBeDisabled());
     fireEvent.click(action);
     expect(api.updateClassification).toHaveBeenCalledTimes(2);
-    expect(screen.getByText("2/3 seleccionadas")).toBeInTheDocument();
+    expect(screen.getByText("3/4 seleccionadas")).toBeInTheDocument();
   });
 
   it.each(["BILLING", "CUSTOMER"] as const)("denies %s without requesting classifications", (role) => {

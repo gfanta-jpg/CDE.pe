@@ -24,10 +24,10 @@ const errorCodeSchema = z.object({ code: z.string() });
 export class ClassificationApiError extends Error {
   constructor(readonly status: number, readonly code?: string) {
     const editorialMessages: Record<string, string> = {
-      CATEGORY_LANDING_LIMIT_EXCEEDED: "Solo puedes seleccionar hasta tres categorías. Retira una antes de añadir otra.",
+      CATEGORY_LANDING_LIMIT_EXCEEDED: "Solo puedes seleccionar hasta cuatro categorías. Retira una antes de añadir otra.",
       CATEGORY_LANDING_REQUIRES_ACTIVE: "Solo puedes seleccionar u ordenar categorías activas. Retira primero las selecciones inactivas.",
       CATEGORY_LANDING_POSITION_OCCUPIED: "Esa posición cambió. Revisa el orden actualizado e inténtalo nuevamente.",
-      CATEGORY_LANDING_INVALID: "Selecciona una posición válida entre 1 y 3.",
+      CATEGORY_LANDING_INVALID: "Selecciona una posición válida entre 1 y 4.",
     };
     super((code && editorialMessages[code]) || (
       status === 401 ? "Tu sesión venció. Inicia sesión nuevamente."

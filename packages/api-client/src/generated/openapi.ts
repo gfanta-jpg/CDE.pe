@@ -555,7 +555,7 @@ export interface paths {
         };
         /**
          * Read the fixed public landing composition
-         * @description Up to three featured products, nine latest products excluding the displayed featured IDs, and three ordered non-empty categories with up to three products each. No query parameters are accepted. All sections share one database snapshot; no administrative editorial fields are exposed.
+         * @description Up to three featured products, nine latest products excluding the displayed featured IDs, and up to four ordered highlighted active categories (also when empty) with up to three products each. No query parameters are accepted. All sections share one database snapshot; no administrative editorial fields are exposed.
          */
         get: operations["getCatalogLanding"];
         put?: never;

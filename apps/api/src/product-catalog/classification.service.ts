@@ -150,7 +150,7 @@ export class ClassificationService {
     const prefix = kind === "category" ? "categories" : "tags";
     const constraint = this.constraint(error);
     if (constraint === "categories_landing_order_unique") throw new ConflictException({ code: "CATEGORY_LANDING_POSITION_OCCUPIED", message: "This landing position is occupied" });
-    if (constraint === "categories_landing_selection_consistent") throw new BadRequestException({ code: "CATEGORY_LANDING_INVALID", message: "Select a position from 1 to 3 or remove the selection" });
+    if (constraint === "categories_landing_selection_consistent") throw new BadRequestException({ code: "CATEGORY_LANDING_INVALID", message: "Select a position from 1 to 4 or remove the selection" });
     if (constraint === `${prefix}_name_unique`) throw new ConflictException({ code: "CLASSIFICATION_NAME_ALREADY_EXISTS", message: "A classification with this name already exists" });
     if (constraint === `${prefix}_slug_unique`) throw new ConflictException({ code: "CLASSIFICATION_SLUG_ALREADY_EXISTS", message: "A classification with this slug already exists" });
     throw error;

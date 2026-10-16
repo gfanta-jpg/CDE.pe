@@ -19,9 +19,9 @@ export function LandingCategoriesPanel({ categories, error, isLoading, isPending
   return <section aria-labelledby="landing-categories-title" aria-busy={isPending} className="my-6 rounded-2xl border border-[var(--ds-border)] bg-[var(--ds-surface)] p-5 text-[var(--ds-text)] shadow-sm sm:p-6" data-slot="landing-categories">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 className="m-0 text-lg font-bold" id="landing-categories-title">Categorías importantes de la landing</h2>
-      <p className="m-0 font-mono text-sm">{categories.length}/3 seleccionadas</p>
+      <p className="m-0 font-mono text-sm">{categories.length}/4 seleccionadas</p>
     </div>
-    <p className="text-sm text-[var(--ds-text-muted)]" id="landing-categories-help">Selecciona entre dos y tres categorías activas con la estrella del listado. Arrastra el botón de una categoría sobre otra para intercambiar posiciones, o usa las flechas con teclado o pantalla táctil. Cada cambio se guarda automáticamente.</p>
+    <p className="text-sm text-[var(--ds-text-muted)]" id="landing-categories-help">Selecciona entre dos y cuatro categorías activas con la estrella del listado. Arrastra el botón de una categoría sobre otra para intercambiar posiciones, o usa las flechas con teclado o pantalla táctil. Cada cambio se guarda automáticamente.</p>
     {isLoading ? <LoadingState message="Consultando selección editorial…" /> : error ? <ErrorState message="No pudimos cargar las categorías importantes." action={<button className="font-bold underline" onClick={onRetry} type="button">Reintentar selección editorial</button>} /> : <>
       {activeCount < 2 ? <p className="rounded-lg border border-[var(--ds-border)] bg-[var(--ds-surface-subtle)] p-3 text-sm" role="status">Configuración incompleta: selecciona al menos dos categorías activas. Actualmente hay {activeCount}.</p> : null}
       {categories.some((category) => category.status !== "ACTIVE") ? <p className="text-sm" role="status">Las selecciones inactivas no aparecen en la tienda y ocupan una posición. Retíralas antes de reutilizarla.</p> : null}

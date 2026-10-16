@@ -15,7 +15,7 @@ export function useLandingCategories(accessToken: string, actorId: string | unde
     enabled,
     queryKey: ["backoffice", "categories", "landing", actorId],
     queryFn: ({ signal }) => listClassifications("categories", accessToken, {
-      page: 1, pageSize: 3, showOnLanding: true, view: "administrative", sortBy: "name", sortOrder: "asc",
+      page: 1, pageSize: 4, showOnLanding: true, view: "administrative", sortBy: "name", sortOrder: "asc",
     }, signal),
     staleTime: 0,
     gcTime: 0,
@@ -38,7 +38,7 @@ export function useLandingCategories(accessToken: string, actorId: string | unde
   const ready = enabled && query.isSuccess && !query.isFetching && !mutation.isPending;
 
   function select(category: Category) {
-    if (!ready || category.status !== "ACTIVE" || category.showOnLanding || categories.length >= 3) return;
+    if (!ready || category.status !== "ACTIVE" || category.showOnLanding || categories.length >= 4) return;
     mutation.mutate({ category, selected: true });
   }
   function withdraw(category: Category) {

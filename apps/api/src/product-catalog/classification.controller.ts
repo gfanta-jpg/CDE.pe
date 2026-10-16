@@ -17,7 +17,7 @@ import {
 } from "../identity-access/authorization/index.js";
 import { ClassificationService } from "./classification.service.js";
 import {
-  CLASSIFICATION_SORT_FIELDS, CLASSIFICATION_STATUSES,
+  CLASSIFICATION_SORT_FIELDS, CLASSIFICATION_STATUSES, LANDING_CATEGORY_LIMIT,
   type CategoryRecord, type ClassificationPage, type ClassificationQuery, type TagRecord,
 } from "./classification.types.js";
 
@@ -47,7 +47,7 @@ const categoryUpdateSchema = categoryCreateSchema.partial().extend({
   description: z.string().trim().max(10_000).optional(),
   status: z.enum(CLASSIFICATION_STATUSES).optional(),
   showOnLanding: z.boolean().optional(),
-  landingOrder: z.number().int().min(1).max(3).nullable().optional(),
+  landingOrder: z.number().int().min(1).max(LANDING_CATEGORY_LIMIT).nullable().optional(),
 }).refine((value) => Object.keys(value).length > 0);
 const tagCreateSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -76,7 +76,7 @@ class ClassificationBaseDto {
 }
 class CategoryDto extends ClassificationBaseDto {
   @ApiPropertyOptional({ type: Boolean, description: "ADMIN view and mutation responses only" }) showOnLanding?: boolean;
-  @ApiPropertyOptional({ type: Number, nullable: true, minimum: 1, maximum: 3, description: "ADMIN view and mutation responses only" }) landingOrder?: number | null;
+  @ApiPropertyOptional({ type: Number, nullable: true, minimum: 1, maximum: 4, description: "ADMIN view and mutation responses only" }) landingOrder?: number | null;
   @ApiProperty() description!: string;
 }
 class TagDto extends ClassificationBaseDto {}
@@ -102,7 +102,7 @@ class CreateCategoryDto {
 }
 class UpdateCategoryDto {
   @ApiPropertyOptional({ type: Boolean }) showOnLanding?: boolean;
-  @ApiPropertyOptional({ type: Number, nullable: true, minimum: 1, maximum: 3, description: "Swap positions when both categories are already selected" }) landingOrder?: number | null;
+  @ApiPropertyOptional({ type: Number, nullable: true, minimum: 1, maximum: 4, description: "Swap positions when both categories are already selected" }) landingOrder?: number | null;
   @ApiPropertyOptional({ maxLength: 200 }) name?: string;
   @ApiPropertyOptional({ maxLength: 220 }) slug?: string;
   @ApiPropertyOptional({ maxLength: 10_000 }) description?: string;

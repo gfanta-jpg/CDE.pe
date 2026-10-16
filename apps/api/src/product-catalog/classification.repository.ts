@@ -12,6 +12,7 @@ import type {
   ClassificationQuery,
   ClassificationRecord,
 } from "./classification.types.js";
+import { LANDING_CATEGORY_LIMIT } from "./classification.types.js";
 
 type CountRow = { totalItems: number };
 type RawClassificationRecord = Omit<ClassificationRecord, "createdAt" | "updatedAt" | "deletedAt"> & {
@@ -173,11 +174,11 @@ export class ClassificationRepository {
         throw new BadRequestException({ code: "CATEGORY_LANDING_INVALID", message: "An unselected category cannot have a landing position" });
       }
       const selected = await tx.select().from(categories).where(eq(categories.showOnLanding, true));
-      if (showOnLanding && !previous.showOnLanding && selected.length >= 3) {
-        throw new ConflictException({ code: "CATEGORY_LANDING_LIMIT_EXCEEDED", message: "Select at most three categories" });
+      if (showOnLanding && !previous.showOnLanding && selected.length >= LANDING_CATEGORY_LIMIT) {
+        throw new ConflictException({ code: "CATEGORY_LANDING_LIMIT_EXCEEDED", message: "Select at most four categories" });
       }
       const landingOrder = showOnLanding
-        ? (input.landingOrder === undefined ? previous.landingOrder ?? [1, 2, 3].find((position) => !selected.some((item) => item.landingOrder === position))! : input.landingOrder)
+        ? (input.landingOrder === undefined ? previous.landingOrder ?? Array.from({ length: LANDING_CATEGORY_LIMIT }, (_, index) => index + 1).find((position) => !selected.some((item) => item.landingOrder === position))! : input.landingOrder)
         : null;
       if (showOnLanding && landingOrder === null) {
         throw new BadRequestException({ code: "CATEGORY_LANDING_INVALID", message: "A selected category requires a landing position" });

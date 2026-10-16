@@ -41,6 +41,7 @@ import type {
   ProductClassificationSummary,
   UpdateAdministrativeProduct,
 } from "./product-administration.types.js";
+import { LANDING_CATEGORY_LIMIT } from "./classification.types.js";
 import { SYSTEM_CURRENCY } from "../shared/system-currency.js";
 import { enqueueCloudImageCleanup } from "./image-storage/catalog-image-cleanup.js";
 import { normalizeSlug, slugCandidate } from "./slug.js";
@@ -138,11 +139,12 @@ export class ProductAdministrationRepository {
       const latestRows = await readProducts(9, featuredIds.length ? [notInArray(products.id, featuredIds)] : []);
       const selectedCategories = await transaction.select({ id: categories.id, name: categories.name, slug: categories.slug, status: categories.status })
         .from(categories).where(and(eq(categories.showOnLanding, true), eq(categories.status, "ACTIVE"), isNull(categories.deletedAt)))
-        .orderBy(asc(categories.landingOrder), asc(categories.id)).limit(3);
+        .orderBy(asc(categories.landingOrder), asc(categories.id)).limit(LANDING_CATEGORY_LIMIT);
       const categorySections = [];
       for (const category of selectedCategories) {
         const rows = await readProducts(3, [eq(products.categoryId, category.id)]);
-        if (rows.length) categorySections.push({ category, rows });
+        // Highlighted categories stay listed even without products (storefront tabs).
+        categorySections.push({ category, rows });
       }
       const ids = [...new Set([...featuredRows, ...latestRows, ...categorySections.flatMap((section) => section.rows)].map((row) => row.id))];
       const classifications = await this.loadClassifications(ids, transaction, true);
