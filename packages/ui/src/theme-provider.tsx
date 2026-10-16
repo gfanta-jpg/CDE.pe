@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { create } from "zustand";
 
 import { ThemeIcon } from "./theme-icon";
@@ -68,25 +68,42 @@ export function connectThemeStore(store: ReturnType<typeof createThemeStore>, ap
   };
 }
 
-export function ThemeProvider({ application, children }: Readonly<{ application: ThemeApplication; children: ReactNode }>) {
+type ThemeControl = Readonly<{ theme: Theme; ready: boolean; toggle: () => void }>;
+
+const ThemeControlContext = createContext<ThemeControl | null>(null);
+
+/** Lets an application place its own accessible toggle (e.g. in a header). */
+export function useThemeControl(): ThemeControl {
+  const control = useContext(ThemeControlContext);
+  if (!control) throw new Error("useThemeControl must be used inside ThemeProvider");
+  return control;
+}
+
+export function ThemeProvider({ application, children, floatingToggle = true }: Readonly<{
+  application: ThemeApplication;
+  children: ReactNode;
+  /** Renders the fixed bottom-right toggle; disable when the app provides its own. */
+  floatingToggle?: boolean;
+}>) {
   const [store] = useState(createThemeStore);
   const theme = store((state) => state.theme);
   const ready = store((state) => state.ready);
   const setTheme = store((state) => state.setTheme);
   useEffect(() => connectThemeStore(store, application), [application, store]);
+  const toggle = () => setTheme(theme === "dark" ? "light" : "dark");
 
-  return <>
+  return <ThemeControlContext.Provider value={{ theme, ready, toggle }}>
     {children}
-    <button
+    {floatingToggle ? <button
       aria-label="Tema oscuro"
       aria-pressed={theme === "dark"}
       disabled={!ready}
       className="fixed bottom-5 right-5 z-40 inline-flex size-11 items-center justify-center rounded-full border border-[var(--ds-border)] bg-[var(--ds-surface)] text-[var(--ds-text)] shadow-lg transition-transform hover:scale-110 motion-reduce:transform-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ds-focus)]"
       style={{ backgroundImage: "radial-gradient(circle at 30% 20%, var(--ds-accent-soft), var(--ds-surface) 75%)", boxShadow: "inset 0 1px 2px var(--ds-surface), var(--ds-elevation)" }}
       data-slot="theme-toggle"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={toggle}
       title={theme === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
       type="button"
-    ><span data-theme-icon={theme === "dark" ? "sun" : "moon"}><ThemeIcon sun={theme === "dark"} /></span></button>
-  </>;
+    ><span data-theme-icon={theme === "dark" ? "sun" : "moon"}><ThemeIcon sun={theme === "dark"} /></span></button> : null}
+  </ThemeControlContext.Provider>;
 }

@@ -7,8 +7,8 @@ import "./globals.css";
 import { StorefrontProviders } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Technology Storefront",
-  description: "Catálogo público del e-commerce tecnológico.",
+  title: "CDE - Centro de Diagnóstico Estético",
+  description: "Centro de Diagnóstico Ecográfico (CDE) — ecografía dermatológica y estética de alta resolución con la Dra. Anne Kusch en Lima, Perú. Seguimiento de rellenos, bioestimuladores y diagnóstico por imagen aplicado a medicina estética.",
 };
 
 type RootLayoutProps = Readonly<{

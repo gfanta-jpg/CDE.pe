@@ -16,6 +16,8 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+vi.mock("../src/features/layout/theme-switch", () => ({ ThemeSwitch: () => null }));
+
 vi.mock("next/navigation", () => ({
   usePathname: () => "/cart",
   useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),

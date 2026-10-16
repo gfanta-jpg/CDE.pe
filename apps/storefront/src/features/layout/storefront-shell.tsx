@@ -5,6 +5,8 @@ import { SessionControls } from "../auth/session-controls";
 import { CartShortcut } from "../cart/cart-shortcut";
 import { StorefrontHeader } from "./storefront-header";
 import { StorefrontNavLink } from "./storefront-nav-link";
+import { ShellChrome } from "./shell-chrome";
+import { ThemeSwitch } from "./theme-switch";
 
 export function StorefrontShell({ children }: Readonly<{ children: ReactNode }>) {
   return (
@@ -16,6 +18,7 @@ export function StorefrontShell({ children }: Readonly<{ children: ReactNode }>)
         Saltar al contenido
       </a>
 
+      <ShellChrome>
       <StorefrontHeader>
         <div className="storefront-header-inner mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-10">
           <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-3">
@@ -45,14 +48,17 @@ export function StorefrontShell({ children }: Readonly<{ children: ReactNode }>)
           <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 md:justify-end">
             <SessionControls />
             <CartShortcut />
+            <ThemeSwitch />
           </div>
         </div>
       </StorefrontHeader>
+      </ShellChrome>
 
       <div className="min-w-0 flex-1 scroll-mt-80 md:scroll-mt-40" id="main-content" tabIndex={-1}>
         {children}
       </div>
 
+      <ShellChrome>
       <footer data-slot="storefront-footer" className="border-t border-[var(--ds-border-subtle)] bg-[var(--ds-surface)] text-[var(--ds-text-muted)]">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-10 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
           <div><p className="m-0 text-lg font-semibold text-[var(--ds-text)]">Technology Store</p>
@@ -64,6 +70,7 @@ export function StorefrontShell({ children }: Readonly<{ children: ReactNode }>)
           </nav>
         </div>
       </footer>
+      </ShellChrome>
     </div>
   );
 }

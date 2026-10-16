@@ -22,7 +22,7 @@ export function StorefrontProviders({ children }: Readonly<{ children: ReactNode
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider application="storefront">
+      <ThemeProvider application="storefront" floatingToggle={false}>
         <SessionProvider>
           {children}
           <FlashRegion appearance="storefront" />

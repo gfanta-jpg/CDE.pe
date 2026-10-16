@@ -1,5 +1,5 @@
 export { ErrorState, LoadingState } from "./async-state";
-export { ThemeProvider } from "./theme-provider";
+export { ThemeProvider, useThemeControl } from "./theme-provider";
 export { themeBootstrapScript, themeStorageKey, type Theme, type ThemeApplication } from "./theme-bootstrap";
 export { ConfirmationDialog } from "./confirmation-dialog";
 export { CollapsibleSidePanel } from "./collapsible-side-panel";

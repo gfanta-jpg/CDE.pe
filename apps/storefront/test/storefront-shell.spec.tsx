@@ -4,9 +4,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { StorefrontShell } from "../src/features/layout/storefront-shell";
 
-const navigation = vi.hoisted(() => ({ pathname: "/" }));
+const navigation = vi.hoisted(() => ({ pathname: "/products" }));
 vi.mock("next/navigation", () => ({ usePathname: () => navigation.pathname }));
-beforeEach(() => { navigation.pathname = "/"; });
+beforeEach(() => { navigation.pathname = "/products"; });
 
 vi.mock("next/link", () => ({
   default: ({ children, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) => (
@@ -22,8 +22,25 @@ vi.mock("../src/features/cart/cart-shortcut", () => ({
   CartShortcut: () => <nav aria-label="Acceso rápido al carrito">Carrito</nav>,
 }));
 
+vi.mock("../src/features/layout/theme-switch", () => ({
+  ThemeSwitch: () => <button aria-pressed="false" type="button">Tema oscuro</button>,
+}));
+
 describe("StorefrontShell", () => {
-  it.each([["/", "Inicio"], ["/products", "Productos"], ["/products/notebook", "Productos"], ["/products-other", null], ["/login", null]])("marca únicamente el enlace de la ruta %s", (pathname, active) => {
+  it("ubica el selector de tema claro/oscuro en el header", () => {
+    render(<StorefrontShell><main>Contenido</main></StorefrontShell>);
+    expect(within(screen.getByRole("banner")).getByRole("button", { name: "Tema oscuro" })).toBeInTheDocument();
+  });
+
+  it("cede header y footer a la landing CDE en la ruta /", () => {
+    navigation.pathname = "/";
+    render(<StorefrontShell><main>Landing</main></StorefrontShell>);
+    expect(screen.queryByRole("banner")).not.toBeInTheDocument();
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
+    expect(screen.getByRole("main")).toHaveTextContent("Landing");
+  });
+
+  it.each([["/products", "Productos"], ["/products/notebook", "Productos"], ["/products-other", null], ["/login", null]])("marca únicamente el enlace de la ruta %s", (pathname, active) => {
     navigation.pathname = pathname as string;
     render(<StorefrontShell><main>Contenido</main></StorefrontShell>);
     const nav = screen.getByRole("navigation", { name: "Navegación principal" });
