@@ -13,6 +13,7 @@ export type DatabaseMigrationOptions = Readonly<{
   databaseUrl: string;
   migrationsFolder: string;
   tlsVerifyServer?: boolean | string;
+  tlsCaCertificate?: string;
 }>;
 
 /**
@@ -25,12 +26,13 @@ export async function runDatabaseMigrations({
   databaseUrl,
   migrationsFolder,
   tlsVerifyServer = true,
+  tlsCaCertificate,
 }: DatabaseMigrationOptions): Promise<void> {
   await access(join(migrationsFolder, "meta", "_journal.json"));
 
   const pool = new Pool({
     application_name: "technology-ecommerce-api-migrations",
-    ...databaseConnectionOptions(databaseUrl, tlsVerifyServer),
+    ...databaseConnectionOptions(databaseUrl, tlsVerifyServer, tlsCaCertificate),
     connectionTimeoutMillis: 5_000,
     idleTimeoutMillis: 5_000,
     max: 1,

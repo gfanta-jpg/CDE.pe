@@ -73,6 +73,8 @@ const environmentSchema = z
     AUTH_ACCESS_TOKEN_SECRET: z.string().min(32).optional(),
     DATABASE_TLS_VERIFY_SERVER: z.enum(["true", "false"]).default("true")
       .transform((value) => value === "true"),
+    /** PEM CA bundle that signs the database server certificate (e.g. Supabase root CA). */
+    DATABASE_TLS_CA: z.string().optional(),
     AUTH_ACCESS_TOKEN_TTL_SECONDS: z.coerce
       .number()
       .int()
@@ -142,7 +144,7 @@ const environmentSchema = z
       context.addIssue({ code: "custom", path: ["CRON_SECRET"], message: "A private CRON_SECRET of at least 32 characters is required on Vercel production" });
     }
     try {
-      databaseConnectionOptions(environment.DATABASE_URL, environment.DATABASE_TLS_VERIFY_SERVER);
+      databaseConnectionOptions(environment.DATABASE_URL, environment.DATABASE_TLS_VERIFY_SERVER, environment.DATABASE_TLS_CA);
     } catch (error) {
       context.addIssue({ code: "custom", path: ["DATABASE_URL"],
         message: error instanceof Error ? error.message : "Invalid database connection configuration" });

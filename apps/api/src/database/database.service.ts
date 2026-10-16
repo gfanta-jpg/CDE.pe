@@ -36,7 +36,7 @@ export class DatabaseService
   ) {
     const verifyServer = config.get("DATABASE_TLS_VERIFY_SERVER", { infer: true });
     const connection = databaseConnectionOptions(
-      config.get("DATABASE_URL", { infer: true }), verifyServer,
+      config.get("DATABASE_URL", { infer: true }), verifyServer, config.get("DATABASE_TLS_CA", { infer: true }),
     );
     if (verifyServer === false) this.logger.warn(DATABASE_TLS_WARNING);
     this.pool = new Pool({

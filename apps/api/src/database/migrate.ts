@@ -30,6 +30,7 @@ async function main(): Promise<void> {
     databaseUrl: requiredDatabaseUrl(),
     migrationsFolder,
     tlsVerifyServer: env.DATABASE_TLS_VERIFY_SERVER ?? "true",
+    tlsCaCertificate: env.DATABASE_TLS_CA,
   });
 
   stdout.write(

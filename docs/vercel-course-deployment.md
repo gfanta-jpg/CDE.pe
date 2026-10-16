@@ -86,9 +86,16 @@ de `.env` si falta allí, nunca su URI. Verifica TLS cliente→pooler y exclusi�
 liberación de un advisory lock aleatorio entre dos conexiones. No ejecuta
 migraciones, seed, workers, escrituras de datos ni Cloudinary.
 
-TLS verifica por defecto. La demo autorizada usa explícitamente
-`DATABASE_TLS_VERIFY_SERVER=false`: tráfico cifrado, **sin comprobar identidad
-del servidor**, con riesgo de suplantación; no afecta HTTPS de Cloudinary.
+TLS verifica por defecto. Supabase firma su certificado con su propia CA, que
+Node no incluye: configurar `DATABASE_TLS_VERIFY_SERVER=true` y
+`DATABASE_TLS_CA` con el PEM completo de Supabase → Settings → Database → SSL
+Configuration → Download certificate (certificado público, no secreto). La CA
+se confía solo para los pools de PostgreSQL del API, migrador y seed; no usa
+`NODE_EXTRA_CA_CERTS` ni archivos en disco, así que funciona igual en Vercel.
+Se aceptan saltos de línea reales o `
+` escapados. La excepción del curso
+`DATABASE_TLS_VERIFY_SERVER=false` (cifrado sin comprobar identidad) queda solo
+como alternativa explícita; no afecta HTTPS de Cloudinary.
 
 En Vercel: máximo dos conexiones de consulta + dos de coordinación = **cuatro
 por instancia**, reutilizadas y con cierre de inactividad corto. No son cuatro

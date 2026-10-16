@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { databaseConnectionOptions } from "../../src/database/connection-options.js";
+import { databaseConnectionOptions, normalizeDatabaseCa } from "../../src/database/connection-options.js";
 import { validateEnvironment } from "../../src/config/environment.js";
 
 const remote = "postgresql://postgres:private-password@db.course.supabase.co:5432/postgres";
@@ -32,6 +32,21 @@ describe("PostgreSQL TLS policy", () => {
   it("rejects transaction pooling and plaintext remote connections", () => {
     expect(() => databaseConnectionOptions(remote.replace(":5432", ":6543"))).toThrow("session");
     expect(() => databaseConnectionOptions(`${remote}?sslmode=disable`, false)).toThrow("TLS");
+  });
+  it("trusts a configured database CA only for this pool while keeping verification", () => {
+    const pem = "-----BEGIN CERTIFICATE-----\nMIIDtest\n-----END CERTIFICATE-----";
+    const previous = process.env.NODE_EXTRA_CA_CERTS;
+    expect(databaseConnectionOptions(remote, true, pem).ssl).toEqual({ rejectUnauthorized: true, ca: `${pem}\n` });
+    // Single-line env values with escaped newlines and CRLF bundles are normalized.
+    expect(databaseConnectionOptions(remote, true, pem.replace(/\n/g, "\\n")).ssl).toEqual({ rejectUnauthorized: true, ca: `${pem}\n` });
+    expect(normalizeDatabaseCa(`${pem}\r\n${pem}`)).toBe(`${pem}\n${pem}\n`);
+    expect(normalizeDatabaseCa("  ")).toBeUndefined();
+    expect(databaseConnectionOptions("postgresql://postgres:test@localhost:5432/test", true, pem).ssl).toBe(false);
+    expect(process.env.NODE_EXTRA_CA_CERTS).toBe(previous);
+  });
+  it("rejects a CA value without a PEM certificate, also through environment validation", () => {
+    expect(() => databaseConnectionOptions(remote, true, "not-a-certificate")).toThrow("PEM certificate");
+    expect(() => validateEnvironment({ DATABASE_URL: remote, DATABASE_TLS_CA: "not-a-certificate" })).toThrow("PEM certificate");
   });
   it("rejects malformed configuration without leaking credentials", () => {
     expect(() => databaseConnectionOptions("not-a-url-private-password")).toThrow("valid PostgreSQL URL");

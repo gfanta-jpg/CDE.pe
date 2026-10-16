@@ -19,7 +19,8 @@ async function main(): Promise<void> {
   const localEnvironment = parse(await readFile(resolve(".env")));
   const verify = privateEnvironment.DATABASE_TLS_VERIFY_SERVER
     ?? localEnvironment.DATABASE_TLS_VERIFY_SERVER ?? "true";
-  const pool = new Pool({ ...databaseConnectionOptions(uri, verify), max: 2,
+  const ca = privateEnvironment.DATABASE_TLS_CA ?? localEnvironment.DATABASE_TLS_CA;
+  const pool = new Pool({ ...databaseConnectionOptions(uri, verify, ca), max: 2,
     connectionTimeoutMillis: 10_000, query_timeout: 10_000 });
   const key = `vercel-preflight:${randomUUID()}`;
   try {
