@@ -13,6 +13,7 @@
     "db:migrate": "tsx --require dotenv/config src/database/migrate.ts",
     "db:migrate:deploy": "node dist/database/migrate.js",
     "db:seed": "tsx src/database/seed/cli.ts",
+    "db:seed:admin": "tsx src/database/seed/admin-cli.ts",
     "images:reconcile": "tsx src/product-catalog/image-storage/reconcile-catalog-images.ts",
     "seed:images:check": "tsx src/database/seed/verify-image-manifest.ts",
     "lint": "eslint . --max-warnings=0",
